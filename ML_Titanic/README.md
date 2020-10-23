@@ -1,2 +1,2 @@
 # Notebooks(ipynb)
- Meus ipynb e projetos relacionados
+ Meus .ipynb e projetos relacionados
