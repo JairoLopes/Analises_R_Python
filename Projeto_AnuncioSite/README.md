@@ -4,4 +4,4 @@
 ## Informações adicionais:
 ##modelo utilizado:
 Logistic Regression
-
+Random Forest
