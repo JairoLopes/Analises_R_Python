@@ -3,6 +3,6 @@
 
 ## Informações adicionais:
 ## Informações adicionais:
-##Modelo utilizado: 
-Linear Regression
+## Modelo utilizado: 
+### Linear Regression
 
