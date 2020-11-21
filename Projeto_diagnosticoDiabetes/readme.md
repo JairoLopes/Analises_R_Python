@@ -6,10 +6,10 @@
 
 ## Informações adicionais:
 #### Modelo utilizado: 
-Random Forest
-Logistic Regression
-SVM(SVC)
-AdaBoost
-GradientBoosting
-Extra Tree
+##### Random Forest
+##### Logistic Regression
+##### SVM(SVC)
+##### AdaBoost
+##### GradientBoosting
+##### Extra Tree
 
