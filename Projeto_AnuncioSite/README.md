@@ -5,3 +5,5 @@
 ## modelo utilizado:
 #### Logistic Regression
 #### Random Forest
+#### Gradient Boosting
+#### SVC
