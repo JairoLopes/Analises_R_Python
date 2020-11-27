@@ -5,17 +5,17 @@
 
 ## Informações adicionais:
 ## Modelos utilizado: 
-### Logistic Regression
-### Linear Regression
-### KNN
-### ExtraTreesClassifier
-### GradientBoostingClassifier
-### AdaBoostClassifier
-### SVC
-### GaussianNB
-### Perceptron
-### LinearSVC
-### SGDClassifier
-### DecisionTreeClassifier
-### RandomForestClassifier
+#### Logistic Regression
+#### Linear Regression
+#### KNN
+#### ExtraTreesClassifier
+#### GradientBoostingClassifier
+#### AdaBoostClassifier
+#### SVC
+#### GaussianNB
+#### Perceptron
+#### LinearSVC
+#### SGDClassifier
+#### DecisionTreeClassifier
+#### RandomForestClassifier
 

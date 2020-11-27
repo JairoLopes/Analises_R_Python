@@ -5,7 +5,7 @@
 #### Este projeto contem dados **fictícios** de um dataset com informações de imóveis
 ## Informações adicionais:
 ## Modelos utilizados: 
-#### Linear Regression
-#### Random Forest
-#### Decision Tree
+##### Linear Regression
+##### Random Forest
+##### Decision Tree
 
