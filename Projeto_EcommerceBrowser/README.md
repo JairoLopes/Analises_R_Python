@@ -3,6 +3,3 @@
 
 ### Obs: Preview do projeto clicando no arquivo .ipynb
 
-## Informações adicionais:
-Este ipynb contém mais recursos de programação que os outros por conta que este dataset contem mais de uma informação em suas colunas
-
