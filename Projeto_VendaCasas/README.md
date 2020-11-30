@@ -6,6 +6,7 @@
 ## Informações adicionais:
 ### Modelos utilizados: 
 ##### Linear Regression
+##### Gradient Boosting
 ##### Random Forest
 ##### Decision Tree
 
