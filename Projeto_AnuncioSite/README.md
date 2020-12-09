@@ -7,3 +7,4 @@
 #### Random Forest
 #### Gradient Boosting
 #### SVC
+#### KNN
