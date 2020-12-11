@@ -12,4 +12,5 @@
 #### Gradient Boosting
 #### Extra Tree
 #### SVM(SVC)
+#### KNN
 

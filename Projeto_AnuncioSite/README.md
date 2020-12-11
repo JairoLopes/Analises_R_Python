@@ -2,7 +2,7 @@
 ### Obs: Preview do projeto clicando no arquivo .ipynb
 
 ## Informações adicionais:
-## modelo utilizado:
+# modelo utilizado:
 #### Logistic Regression
 #### Random Forest
 #### Gradient Boosting
