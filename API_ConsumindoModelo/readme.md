@@ -4,7 +4,7 @@
 
 
 ## Informações adcionais:
-##### Foi usado um dataset simples apenas com o intuito de consumir o modelo
+#### Foi usado um dataset simples apenas com o intuito de consumir o modelo
 #### dataset de exemplo: ranking de status dos pokemons de um jogo da franquia
 #### Modelos utilizados: Random Forest, Gradient Boosting e AdaBoost para prever se o pokemon é lendário ou não
 
