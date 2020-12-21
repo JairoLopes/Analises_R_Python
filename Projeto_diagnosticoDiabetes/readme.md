@@ -1,4 +1,4 @@
-## Projeto de Classificação de pacientes
+# Projeto de Classificação de pacientes
 ### Obs: Preview do projeto clicando no arquivo .ipynb
 
 
