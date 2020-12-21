@@ -1,8 +1,8 @@
-## Análise exploratória de um dataset de uma loja virtual de roupas
+# Análise exploratória de um dataset de uma loja virtual de roupas
 ### Obs: Preview do projeto clicando no arquivo .ipynb
 
 ## Informações adicionais:
-## Modelo utilizado: 
+# Modelo utilizado: 
 #### Linear Regression
 #### Gradient Boosting
 #### Extra Tree
