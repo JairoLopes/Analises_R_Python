@@ -5,7 +5,7 @@
 #### Este projeto irá explorar brevemente os dados de um Hospital com possíveis pacientes diabéticos, assim sendo necessário criar modelos preditivos para auxiliar no diagnóstico dos futuros pacientes baseado no histórico dos pacientes já registrados
 
 ## Informações adicionais:
-#A Modelo utilizado: 
+#AA Modelo utilizado: 
 ##### Random Forest
 ##### Logistic Regression
 ##### SVM(SVC)
