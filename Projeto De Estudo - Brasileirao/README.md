@@ -1,3 +1,5 @@
+# Projeto de estudo
+
 ## Será feita uma análise do conjunto de dados do campeoanto brasileiro desde a temporada 2000 ate o ano de 2019, estudando o histórico do Clube Sociedade Esportiva Palmeiras afim de extrair informações relevantes.
 ### Obs: Preview do projeto clicando no arquivo .ipynb
 
