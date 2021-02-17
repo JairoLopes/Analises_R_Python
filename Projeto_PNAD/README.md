@@ -2,6 +2,7 @@
 
 
 ## Informações adicionais:
+
 **O que é PNAD?**
 A Pesquisa Nacional por Amostra de Domicílios (PNAD) era uma pesquisa anual realizada pelo IBGE nos domicílios brasileiros para apurar características gerais da população, incluindo dados de educação, trabalho, rendimento e habitação, além de levantar, com periodicidade variável, outros temas, de acordo com as necessidades de informação para o país.
 
