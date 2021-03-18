@@ -1,5 +1,5 @@
 # Notebooks-ipynb
-##### Meus .ipynb e projetos relacionados a data science estão/estarão todos neste repositório
+##### Local onde meus Notebooks e projetos em Python estarão salvos
 ***
 ## Observações:
 ###### para pré-visualizar os projetos basta clicar em seus respectivos arquivos .ipynb
