@@ -4,6 +4,7 @@
 
 <<<<<<< HEAD
 =======
+
 >>>>>>> master
 ## Observações:
 ###### para pré-visualizar os projetos basta clicar em seus respectivos arquivos .ipynb
