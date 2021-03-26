@@ -3,6 +3,6 @@
 ***
 
 ## Observações:
-###### para pré-visualizar os projetos basta clicar em seus respectivos arquivos .html, os códigos dos projetos estarão disponibilizados separadamente.
+###### para pré-visualizar os projetos basta clicar em seus respectivos arquivos .ipynb, os códigos .R dos projetos estarão disponibilizados separadamente.
 ###### Os datasets(.csv) de cada projeto estão disponíveis em seus respectivos diretórios
 
