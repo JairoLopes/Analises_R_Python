@@ -1,8 +1,8 @@
 # Notebooks-ipynb
-##### Local onde meus Notebooks e projetos em R estarão salvos(EM ANDAMENTO)
+##### Local onde meus projetos em R serão armazenados(EM ANDAMENTO)
 ***
 
 ## Observações:
-###### para pré-visualizar os projetos basta clicar em seus respectivos arquivos .ipynb
+###### para pré-visualizar os projetos basta clicar em seus respectivos arquivos .html, os códigos dos projetos estarão disponibilizados separadamente.
 ###### Os datasets(.csv) de cada projeto estão disponíveis em seus respectivos diretórios
 
