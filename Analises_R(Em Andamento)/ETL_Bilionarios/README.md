@@ -2,7 +2,7 @@
 ***
 
 ## Observações:
-###### Para um preview da análise, clique neste link https://htmlpreview.github.io/?https://github.com/JairoLopes/Analises_R_Python/blob/master/Analises_R(Em%20Andamento)/ETL_Bilionarios/ETL_Bilionarios.html
+###### Para um preview da análise, clique neste link https://rpubs.com/Lopes_/771181
 
 ###### Os datasets(.csv) de cada projeto estão disponíveis em seus respectivos diretórios
 
