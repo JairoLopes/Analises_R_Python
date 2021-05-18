@@ -1,5 +1,5 @@
-# Notebooks-ipynb
-##### Local onde meus projetos em R serão armazenados(EM ANDAMENTO)
+# Análises usando R(EM ANDAMENTO)
+##### Local onde meus projetos em R serão armazenados
 ***
 
 ## Observações:
