@@ -1,0 +1,12 @@
+library(tidyverse)
+
+df <- read_csv("loan_data.csv")
+df %>% head
+
+df %>% is.na %>% colSums
+
+colnames(df) <- c('atende criterios', 'objetivo do emprestimo', 'juros do emprestimo', 'parcelas mensais', 'renda anual',
+       'rendimento tomador de emprestimo', 'pontuacao de credito', 'dias com credito', 'quantidade nao paga', 'valor da linha de credito usada',
+       'qtd consultas em seis meses', 'qtd atraso de pagamento', 'qtd registros negativos', 'pagou de volta')
+
+ggplot(df, aes(colour=`atende criterios`)) + geom_histogram(aes(x=`pontuacao de credito`))

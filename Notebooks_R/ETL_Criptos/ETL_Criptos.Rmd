@@ -1,0 +1,188 @@
+---
+title: "Análise dos criptoativos desde 29/04/2013 até 27/02/2021"
+author: "Jairo Lopes"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(ggthemes)
+options(scipen = 999)
+
+df <- read_csv("AllCoins.csv")
+
+```
+
+
+
+![](https://cpriqueza.s3.amazonaws.com/wp-content/uploads/2017/12/crypto-guia-do-bitcoin-1-1024x705.jpg)
+
+
+Se você acompanha o mercado financeiro, já deve ter lido ou escutado sobre a ascensão da criptomoeda. O bitcoin, por exemplo, superou os R$152.700 diante da valorização do dólar em 2020. A informação é da empresa Economatica.
+
+Mas você sabe como é possível tirar proveito desse recurso monetário? Antes de mais nada, é preciso entender o que é criptomoeda. Ela é um moeda digital que promete ganhos superiores ao do Mercado Bovespa e sem regulação do Estado.
+
+A criptomoeda, no entanto, vai muito além uma dinheiro virtual. Da mesma forma que a moeda física tem números de série, marca d’água e outros dispositivos de segurança, a criptomoeda utiliza criptografia.
+
+A criptomoeda é um código virtual que pode ser convertido em valores reais. Geralmente, é necessário comprar do emissor ou de alguém que já tenha a moeda.
+
+Sua negociação se dá pela internet, sem burocracias e intermediários, caracterizada pela ausência de um sistema monetário regulamentado e da submissão a uma autoridade financeira — por exemplo, o Banco Central do Brasil.
+
+## Visão geral do dataset
+
+```{r}
+colnames(df) <- c("Ativo","Data","Maxima dia","Minima dia","Valor abertura","Valor fechamento","Volume","Valor de mercado")
+df$Data <- df$Data %>% as.Date()
+df %>% head(4) %>% knitr::kable()
+
+```
+
+___
+
+## Verificando dados nulos
+
+```{r}
+df %>% is.na() %>% colSums() %>% knitr::kable()
+```
+
+
+## Verificando as 10 moedas com o maior valor de mercado dos ultimos 5 meses
+
+```{r}
+df %>% filter( df$Data >= df$Data %>%  max() - (dweeks(4)*5) )  %>% arrange(desc(`Valor de mercado`)) %>% group_by(Ativo) %>% summarise(`Valor de mercado`=mean(`Valor de mercado`)) %>% arrange(desc(`Valor de mercado`)) %>% head(10) %>% knitr::kable()
+
+```
+
+___
+
+
+## Verificando diferença da máxima histórica para a mínima histórica de cada moeda ordenadas pela porcentagem de aumento
+
+```{r}
+df %>% group_by(Ativo) %>% summarise("Minima historica"=min(`Minima dia`), "Maxima historica"=max(`Maxima dia`), "Aumento"=str_c(round(((max(`Maxima dia`) - min(`Minima dia`)) / min(`Minima dia`))*100, 1),"%")) %>% arrange(desc(Aumento)) %>% head(10) %>% knitr::kable()
+
+```
+
+Notamos que todas as moedas tiveram um aumento considerável no decorrer do tempo
+
+___
+
+
+## Verificando o valor de abertura e fechamento no dia da máxima histórica
+
+```{r}
+lista <- list()
+for(i in ativos <- df$Ativo %>% unique()){
+  
+  lista <- append(lista, list(df %>% filter(Ativo==i) %>% filter(`Maxima dia`==`Maxima dia` %>% max) %>% select(Ativo, `Valor abertura`, `Valor fechamento`, `Maxima dia`, Data)))
+}
+
+AberturaFechamento <- lista[[1]]
+for(i in 2:23){
+    AberturaFechamento[nrow(AberturaFechamento)+1,] <- slice(lista[[i]],1)
+}
+
+
+AberturaFechamento %>% arrange(desc(Data)) %>% knitr::kable()
+```
+
+
+Podemos ver que nenhum ativo se manteve com o valor da máxima em seu fechamento
+
+___
+
+
+
+## Verificando o valor de abertura e fechamento no dia da mínima histórica
+
+```{r}
+lista2 <- list()
+for(i in ativos <- df$Ativo %>% unique()){
+  
+  lista2 <- append(lista2, list(df %>% filter(Ativo==i) %>% filter(`Minima dia`==`Minima dia` %>% max) %>% select(Ativo, `Valor abertura`, `Valor fechamento`, `Minima dia`, Data)))
+}
+
+AberturaFechamentoMin <- lista2[[1]]
+for(i in 2:23){
+    AberturaFechamentoMin[nrow(AberturaFechamentoMin)+1,] <- slice(lista2[[i]],1)
+}
+
+
+AberturaFechamentoMin %>% filter(`Minima dia` < `Valor fechamento`) %>% arrange(desc(Data)) %>% knitr::kable()
+```
+
+___
+
+## Visualizando o quanto o valor de mercado influencia no preço dos ativos
+
+```{r}
+dfFiltrado <- df%>%filter(`Valor de mercado` > 0 & `Valor fechamento` > 0)
+ggplot(dfFiltrado, aes(y=`Valor de mercado`, x=`Valor fechamento`, size=`Valor fechamento`)) + geom_point(color="dodgerblue") + theme_calc()
+
+```
+
+Como podemos ver, o valor de mercado(Marketcap) tem total influência no preço das criptos
+
+___
+
+
+## Visualizando o quanto que o valor de mercado subiu no decorrer do tempo das 5 moedas com maior media de valor de mercado
+
+```{r}
+marketcapAtivos <- df %>% group_by(Ativo) %>% summarise(media=mean(`Valor de mercado`)) %>% arrange(desc(media)) %>% head(5) %>% select(Ativo)
+
+dfMkt <- df %>% filter(Ativo==marketcapAtivos$Ativo) 
+
+ggplot(dfMkt, aes(x=Data, y=`Valor de mercado`, color=Ativo)) + geom_line() +
+scale_x_date(date_breaks = "1 year", date_labels = "%b %Y") + theme_fivethirtyeight() +
+theme(axis.text.x = element_text(angle = 10))
+```
+
+como podemos ver, a dominância do bitcoin é absurda
+___
+
+## Visualizando quem tem o maior valor de mercado atualmente
+
+```{r}
+ggplot(dfMkt, aes(x = dfMkt$Ativo, y = dfMkt$`Valor de mercado`, fill=Ativo)) + geom_bar(stat="sum") +
+labs(x="Ativo", y="Valor de mercado", title="Visualizando o marketcap dos 5 primeiros ativos") + theme_calc()
+```
+
+___
+
+## Focando o Bitcoin
+Criada uma variável que calcula a oscilação diaria do bitcoin desde 2013 até 2021 para posteriores análises
+
+
+```{r}
+df2 <- df %>% filter(Ativo=="BTC") %>% select(Ativo, Data, `Valor abertura`, `Valor fechamento`)
+df2$"Oscilacao em %" <- round(((df2$`Valor fechamento` - df2$`Valor abertura`)/ df2$`Valor abertura`)*100,1)
+
+PN <- function(vetor){
+  if(vetor >= 0){
+    return("Positivo")
+  }else if(vetor < 0){
+    return("Negativo")
+  }
+}
+
+df2$Positivo_Negativo <- unlist(sapply(df2$`Oscilacao em %`, PN)) 
+
+
+df2[,-6] %>% head(5) %>% knitr::kable()
+```
+
+___
+
+## Visualizando as oscilações do bitcoin
+
+```{r}
+ggplot(df2, aes(x=Data, y=`Oscilacao em %`, color=Positivo_Negativo)) + geom_line() +
+scale_x_date(date_breaks = "1 year", date_labels = "%Y") + theme_fivethirtyeight()
+```
+
+Bitcoin tem mostrado ser uma moeda pouco volátil se comparado as outras, com oscilações diárias estáveis com poucas exceções como no inicio de 2020 que chegou a desvalorizar quase 40%
+
+___

@@ -1,0 +1,140 @@
+---
+title: "Análise venda de imóveis"
+author: "Jairo Lopes"
+date: "13/05/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(RColorBrewer)
+options(scipen = 999)
+
+df <- read_csv("House.csv")
+colnames(df) <- c('media de lucro de venda', 'media idade das casas', 'media numero de salas','media numero de quartos', 'populacao da regiao', 'valor da casa', 'endereco')
+```
+
+# Resumo
+Este projeto fará uma análise exploratória dos dados de um dataset de venda de casas, para realizar a predição de preços de novas casas com caracteristicas semelhantes as ja vendidas
+
+
+
+### Visão geral do dataset¶
+Verificando quantidade de registros e de colunas respectivamente do conjunto de dados
+
+```{r}
+df %>% str %>% knitr::kable()
+```
+
+```{r}
+df %>% head(4) %>% knitr::kable()
+```
+
+
+___
+
+# ____________________________________________________
+
+
+### Visualizando a distribuição de preços das casas por quantidade de quartos
+
+
+```{r}
+
+
+ggplot(df, aes(x=df$`media numero de quartos`, y=df$`valor da casa`)) + geom_point(color="cyan4") + theme_calc() +
+  
+labs(x="Numero de quartos",y="Valor da casa", parse = F, colour = "black", size = 12,family="Times New Roman") +
+theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+```
+
+
+**OBS:** Não há grande variação de preço por numero de quartos, mas da pra perceber que casas que contém em media 2 quartos, são um pouco mais baratas em seu **valor máximo**
+
+
+___
+
+# ____________________________________________________
+
+
+
+### Visualizando a distribuição de preços das casas por quantidade de salas
+
+```{r}
+ggplot(df, aes(x = df$`media numero de salas`, y=df$`valor da casa`)) + geom_point(color="dodgerblue3") + theme_gdocs() +
+scale_x_continuous(breaks = seq(3, 11, by=1)) +
+  
+labs(x="Numero de salas",y="Valor da casa", parse = F, colour = "black", size = 12,family="Times New Roman") +
+theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+```
+
+**OBS:** obviamente, quanto maior a quantidade de salas, maior o preço da casa, em alguns poucos casos, casas com numero menor de salas sao mais caras
+
+**OBS 2:** Também é possivel notar que a grande maioria das casas possuem entre 6 a 8 salas
+
+
+___
+
+# ____________________________________________________
+
+
+### Visualizando a distribuição de salas por quantidade de quartos
+
+
+```{r}
+ggplot(df, aes(x=df$`media numero de quartos`, y=df$`media numero de salas`)) + geom_point(color="hotpink4") + theme_gdocs() +
+
+labs(x="Numero de quartos",y="Numero de salas", parse = F, colour = "black", size = 12,family="Times New Roman") +
+theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+```
+
+
+**OBS:** Podemos ver que todas as casas com 5 quartos ou mais, possuem no mínimo 7 salas
+
+**OBS 2:** Também observamos que casas com 2 quartos, possuem no maximo 7 salas
+
+
+___
+
+# ____________________________________________________
+
+
+### Visualizando distribuição do preço da casa baseado pela idade da mesma
+
+
+```{r}
+ggplot(df, aes(x=df$`media idade das casas`, y=df$`valor da casa`)) + geom_point(color="magenta4") + theme_gdocs() +
+scale_x_continuous(breaks = seq(0,10,1)) +
+labs(x="Idade do imóvel",y="Valor", parse = F, colour = "black", size = 12,family="Times New Roman") +
+theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+```
+
+
+**OBS:** E mais uma amostra linear onde indica que, quanto mais velha a casa, maior o seu valor
+
+
+___
+
+# ____________________________________________________
+
+
+### Visualizando distribuição de preços da casa por tamanho da população da região
+
+```{r}
+ggplot(df, aes(y=df$`valor da casa`, x=df$`populacao da regiao`)) + geom_point(color="dodgerblue3") + theme_gdocs() +
+labs(x="População da região",y="Valor do imóvel", parse = F, colour = "black", size = 12,family="Times New Roman") +
+theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+```
+
+
+**OBS:** Quanto maior a população da região, maior o valor do imóvel
+
+
+
+___
+
+# ____________________________________________________
+
+
