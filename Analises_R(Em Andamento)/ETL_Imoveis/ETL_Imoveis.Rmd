@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggthemes)
+library(GGally)
 library(RColorBrewer)
 options(scipen = 999)
 
@@ -137,4 +138,18 @@ ___
 
 # ____________________________________________________
 
+
+### Visualizando correlações entre as variáveis
+
+
+```{r}
+ggcorr(df, label = T, hjust = 0.85)
+```
+
+**OBS:** O numero de quartos nao tem uma correlação forte com o valor da casa
+
+
+___
+
+# ____________________________________________________
 
