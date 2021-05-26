@@ -153,3 +153,24 @@ ___
 
 # ____________________________________________________
 
+
+### Filtrando variáveis significantes para o modelo
+
+```{r}
+Y <-  df$`valor da casa`
+x1 <- df$`media de lucro de venda`
+x2 <- df$`media idade das casas`
+x3 <- df$`media numero de salas`
+x4 <- df$`populacao da regiao`
+
+
+model <- lm(Y ~ x1+ x2 + x3 + x4)
+model
+```
+
+
+
+
+
+
+
