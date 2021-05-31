@@ -1,0 +1,132 @@
+---
+title: "Ecommerce"
+author: "Jairo Lopes"
+date: "29/05/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(RColorBrewer)
+library(GGally)
+library(ggthemes)
+options(scipen = 999)
+
+df <- read_csv("Ecommerce_Customers.csv")
+
+df <- df[, c(-1,-2)] %>% mutate("Email"=df$Email)
+
+colnames(df) <- c('avatar', 'duracao consulta estilista', 'tempo online app',
+       'tempo online site', 'tempo de membro', 'valor anual gasto',"Email")
+```
+
+# Projeto ecommerce
+### Resumo
+Uma empresa de comercio eletrônico que vende roupas online, mas também tem sessões de consultoria em estilo e vestuário. Os clientes entram na loja, têm sessões/reuniões com um estilista pessoal, então podem ir para casa e encomendarem em um aplicativo móvel ou site para a roupa que desejam.
+
+A empresa está tentando decidir se deve concentrar seus esforços em aplicativos móveis ou em seu site.
+
+Será feita uma análise exploratória para extrair informações relevantes para responder em quais midias investir para maior faturamento: app ou site.
+
+
+___
+
+# ____________________________________________________
+
+### Visão geral do dataset
+
+```{r}
+df %>% head %>% knitr::kable()
+```
+
+___
+
+# ____________________________________________________
+
+
+### Tendo uma visão geral das variáveis que possam ter fortes correlações
+
+```{r}
+ggcorr(df[,c(-1, -7)], label = T, hjust=0.75)
+```
+
+
+**OBS: **É possivel notar que o tempo que o cliente está vinculado a loja tem total influencia no quanto o mesmo conssome por ano, e que também o tempo que o cliente gasta no app, assim como os clientes que se consultaram com o estilista da loja, tiveram impacto no quanto o cliente gastou por ano
+
+
+___
+
+# ____________________________________________________
+
+## Analisando as correlações detectadas de forma mais detalhada
+
+# ____________________________________________________
+
+___
+
+
+### Visualizando a distribuição entre valor gasto pelo cliente por ano pelo tempo ele é cliente
+
+```{r}
+ggplot(df, aes(x=`tempo de membro`, y=`valor anual gasto`)) + geom_point(color="firebrick3") +
+theme_gdocs() + labs(title = "Valor anual gasto por tempo de membro") + geom_smooth(color="dodgerblue4")
+```
+
+
+**OBS: **É notável que quanto mais antigo o cliente for, mais ele consome por ano
+
+
+___
+
+# ____________________________________________________
+
+
+### Visualizando a correlação entre valor gasto pelo cliente por ano, e quanto tempo em media ele passa olhando o aplicativo
+
+```{r}
+ggplot(df, aes(x=`tempo online app`, y=`valor anual gasto`)) + geom_point(color="dodgerblue3") + geom_smooth(color="firebrick3") + theme_gdocs()
+```
+
+
+**OBS: ** Podemos ver que existe uma certa correlação no tempo que os clientes passam no aplicativo com o quanto ele gasta
+
+
+___
+
+# ____________________________________________________
+
+
+### Verificando o quanto que as consultas com o estilista influenciam no consumo dos clientes
+
+```{r}
+ggplot(df, aes(x=`duracao consulta estilista`, y=`valor anual gasto`)) + geom_point(color="magenta4") + theme_gdocs() +
+geom_smooth()
+```
+
+
+**OBS:** Apesar de não ser uma correlação forte, podemos ver que há uma certa influência do tempo que o cliente consulta o estilista em relação ao consumo anual.
+
+___
+
+# ____________________________________________________
+
+
+
+___
+
+# Conclusão
+Baseado nos gráficos e resultados adquiridos, as compras realizadas pelo app indicam um controle maior sobre o histórico dos clientes, também é notável o quanto os estilistas agregam nos lucros anuais da empresa, então seria mais vantajoso conseguir mais membros através do app para gerar mais lucros e continuar investindo nos estilistas, também foi verificado que os clientes mais antigos costumam consumir mais durante o ano.
+
+___
+
+
+# ____________________________________________________
+
+
+
+
+
+
+
