@@ -1,12 +1,14 @@
 ---
-title: "Ecommerce"
+title: "ETL Ecommerce"
 author: "Jairo Lopes"
-date: "29/05/2021"
-output: html_document
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 library(tidyverse)
 library(lubridate)
 library(RColorBrewer)
@@ -33,7 +35,7 @@ Será feita uma análise exploratória para extrair informações relevantes par
 
 ___
 
-# ____________________________________________________
+# ____________________________________________________________________________
 
 ### Visão geral do dataset
 
@@ -43,7 +45,7 @@ df %>% head %>% knitr::kable()
 
 ___
 
-# ____________________________________________________
+# ____________________________________________________________________________
 
 
 ### Tendo uma visão geral das variáveis que possam ter fortes correlações
@@ -58,12 +60,11 @@ ggcorr(df[,c(-1, -7)], label = T, hjust=0.75)
 
 ___
 
-# ____________________________________________________
+# ____________________________________________________________________________
 
 ## Analisando as correlações detectadas de forma mais detalhada
 
-# ____________________________________________________
-
+# ____________________________________________________________________________
 ___
 
 
@@ -80,8 +81,7 @@ theme_gdocs() + labs(title = "Valor anual gasto por tempo de membro") + geom_smo
 
 ___
 
-# ____________________________________________________
-
+# ____________________________________________________________________________
 
 ### Visualizando a correlação entre valor gasto pelo cliente por ano, e quanto tempo em media ele passa olhando o aplicativo
 
@@ -95,8 +95,7 @@ ggplot(df, aes(x=`tempo online app`, y=`valor anual gasto`)) + geom_point(color=
 
 ___
 
-# ____________________________________________________
-
+# ____________________________________________________________________________
 
 ### Verificando o quanto que as consultas com o estilista influenciam no consumo dos clientes
 
@@ -110,8 +109,7 @@ geom_smooth()
 
 ___
 
-# ____________________________________________________
-
+# ____________________________________________________________________________
 
 
 ___
@@ -122,8 +120,7 @@ Baseado nos gráficos e resultados adquiridos, as compras realizadas pelo app in
 ___
 
 
-# ____________________________________________________
-
+# ____________________________________________________________________________
 
 
 

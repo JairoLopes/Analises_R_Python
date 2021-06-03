@@ -1,7 +1,10 @@
 ---
 title: "Análise dos criptoativos desde 29/04/2013 até 27/02/2021"
 author: "Jairo Lopes"
-output: html_document
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +20,7 @@ df <- read_csv("AllCoins.csv")
 
 
 
-![](https://cpriqueza.s3.amazonaws.com/wp-content/uploads/2017/12/crypto-guia-do-bitcoin-1-1024x705.jpg)
+
 
 
 Se você acompanha o mercado financeiro, já deve ter lido ou escutado sobre a ascensão da criptomoeda. O bitcoin, por exemplo, superou os R$152.700 diante da valorização do dólar em 2020. A informação é da empresa Economatica.
