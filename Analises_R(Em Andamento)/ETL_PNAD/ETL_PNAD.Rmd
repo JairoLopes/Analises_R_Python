@@ -1,0 +1,216 @@
+---
+title: "ETL PNAD"
+author: "Jairo Lopes"
+output: rmdformats::readthedown
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(GGally)
+library(ggthemes)
+library(RColorBrewer)
+library(gridExtra)
+options(scipen = 999)
+suppressWarnings(expr)
+
+df <- read_csv("PNAD_2012.csv")
+
+colnames(df) <- c('Ano', 'Estado', 'Sexo', 'Idade', 'Cor da pele', 'Anos de escolaridade', 'Renda principal', 'Renda total','Peso amostral')
+df$`Renda principal` <- df$`Renda principal` %>% as.numeric()
+df$`Renda total` <-  df$`Renda total` %>% as.numeric()
+
+```
+
+# O que é PNAD?
+A Pesquisa Nacional por Amostra de Domicílios (PNAD) era uma pesquisa anual realizada pelo IBGE nos domicílios brasileiros para apurar características gerais da população, incluindo dados de educação, trabalho, rendimento e habitação, além de levantar, com periodicidade variável, outros temas, de acordo com as necessidades de informação para o país.
+
+A pesquisa foi encerrada em 2016 e substituída, com metodologia atualizada, pela Pesquisa Nacional por Amostra de Domicílios Contínua – PNAD Contínua.
+
+
+## Resumo
+Será feita uma análise do conjunto de dados da PNAD de 2012, a fim de extrair informações relevantes
+
+
+___
+
+
+# Visão geral do conjunto de dados
+
+```{r}
+df %>% str
+```
+
+
+
+```{r}
+df %>% head %>% knitr::kable() 
+```
+
+
+# Verificando dados nulos
+
+```{r}
+colSums(is.na(df)) %>% knitr::kable()
+```
+
+
+
+
+___
+
+___
+
+# Distribuição da pesquisa por cor da pele
+
+```{r}
+distCor <- ((df$`Cor da pele` %>% table() / nrow(df)) * 100 ) %>%  as.tibble() %>% arrange(desc(n)) 
+colnames(distCor) <- c("Cor da pele","Distribuicao"); distCor$Distribuicao <- round(distCor$Distribuicao, 2)
+distCor$Distribuicao <- str_c(distCor$Distribuicao %>% as.character(),"%") 
+distCor %>% knitr::kable()
+```
+
+**OBS:** A maioria das pessoas pesquisadas são pardas e brancas
+
+___
+
+
+___
+
+# Distribuição da pesquisa por sexo
+
+```{r}
+distSexo <- ((df$Sexo %>% table / nrow(df)) * 100) %>% as.tibble()
+colnames(distSexo) <- c("Sexo","Distribuicao"); distSexo$Distribuicao <- str_c(round(distSexo$Distribuicao,2),"%")
+distSexo %>% knitr::kable()
+
+```
+
+___
+
+
+___
+
+
+# Media de idade dos participantes
+
+
+```{r}
+dfFeminino <- df %>% filter(Sexo=="Feminino") %>% na.omit
+dfMasculino <- df %>% filter(Sexo=="Masculino") %>% na.omit
+
+tibble("Media de idade Mulheres"=dfFeminino$Idade %>% mean, "Media de idade Homens"=dfMasculino$Idade %>% mean, "Media idade Geral"=df$Idade %>% mean) %>% knitr::kable()
+```
+
+
+___
+
+
+___
+
+
+
+# Analisando renda dos participantes por idade
+
+```{r}
+dfna <- na.omit(df)
+ggplot(dfna, aes(y=`Renda total`, x=Idade)) + geom_point(color="deeppink4") + theme_gdocs()
+```
+
+**OBS: ** Observamos que a maioria dos participantes possuem uma renda entre 1000 e 3000 reais
+
+___
+
+___
+
+# Analisando renda dos participantes por sexo e idade {.tabset}
+
+
+## Renda por idade das mulheres
+
+```{r}
+plotF <- ggplot(dfFeminino, aes(y=`Renda total`, x=Idade)) + geom_point(color="firebrick3") + labs(title = str_c("Renda por idade das mulheres, Media: ",round(mean(dfFeminino$`Renda total`),2))) + theme_gdocs()
+
+plotF
+```
+
+## Renda por idade dos homens
+
+```{r}
+plotM <- ggplot(dfMasculino, aes(y=`Renda total`, x=Idade)) + geom_point(color="dodgerblue") + labs(title = str_c("Renda por idade dos homens, Media: ",round(mean(dfMasculino$`Renda total`),2)))  + theme_gdocs()
+
+plotM
+```
+
+**OBS** As Mulheres são mais novas, porém tem uma renda média menor que os homens
+
+
+___
+
+___
+
+
+# Avaliando a distribuição de renda por cor da pele
+
+```{r}
+dfCorPele <- df %>% na.omit %>% group_by(`Cor da pele`) %>% summarise("Media Salarial"=mean(`Renda total`)) %>% arrange(desc("Media Salarial"))
+dfCorPele %>% knitr::kable()
+```
+
+
+___
+
+___
+
+# Reproduzindo gráfico dos dados acima
+
+```{r}
+ggplot(dfCorPele, aes(x=`Cor da pele`, y=`Media Salarial`, fill=`Cor da pele`)) + scale_fill_brewer(palette = "Dark2") + geom_bar(stat = "sum") + coord_flip() + theme_gdocs()
+```
+
+
+___
+
+___
+
+
+# Verificando distribuição dos 10 estados com maiores rendas por sexo
+
+
+```{r}
+rendaEstado <- df %>% na.omit %>% group_by(Estado, Sexo) %>% summarise("Renda da regiao"=mean(`Renda total`))
+maioresRendas <- rendaEstado %>% arrange(desc(`Renda da regiao`)) %>% select(Estado) %>% unique %>% head(10)
+estados <- maioresRendas$Estado
+rendaUF <- rendaEstado %>% filter(Estado %in% estados)
+
+ggplot(rendaUF, aes(x=Estado, y=`Renda da regiao`, fill=Sexo)) + scale_fill_manual(values = c("deeppink4","springgreen4")) + scale_y_continuous(breaks = seq(0, 5000, 500)) + geom_bar(stat = "sum", position = "dodge") + theme_calc() +
+labs(title = "Renda por estado separado por sexo") + theme(axis.text.x = element_text(angle = 60))
+```
+
+
+**OBS:** Nos 10 estados com as maiores rendas naquele ano, os homens tinham o salário mais alto, e o Distrito Federal com a maior renda salarial entre todos.
+
+___
+
+___
+
+
+
+# Verificando média salarial de cada idade
+
+```{r}
+rendaIdade <- df %>% na.omit %>% filter(Idade >= 18 ) %>% group_by(Idade) %>% summarise("Media salarial de idade"=mean(`Renda total`))
+
+ggplot(rendaIdade, aes(x=Idade, y=`Media salarial de idade`)) + geom_point(color="dodgerblue3") +
+labs(title = "Media salarial por idade") + scale_x_continuous(breaks = seq(20, 100, 10)) + 
+scale_y_continuous(breaks = seq(0, 4000, 500)) + theme_gdocs()
+```
+
+**OBS: ** É notável que dos 18 aos 65 anos existe um crescimento linear de progressão salarial, e provavelmente após a aposentadoria houve uma quebra desta progressão.
+
+
+___
+
+
+
+

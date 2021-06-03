@@ -1,8 +1,10 @@
 ---
 title: "Análise venda de imóveis"
 author: "Jairo Lopes"
-date: "13/05/2021"
-output: html_document
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
 ---
 
 ```{r setup, include=FALSE}
@@ -22,7 +24,7 @@ Este projeto fará uma análise exploratória dos dados de um dataset de venda d
 
 
 
-### Visão geral do dataset¶
+# Visão geral do dataset¶
 Verificando quantidade de registros e de colunas respectivamente do conjunto de dados
 
 ```{r}
@@ -36,10 +38,9 @@ df %>% head(4) %>% knitr::kable()
 
 ___
 
-# ____________________________________________________
 
 
-### Visualizando a distribuição de preços das casas por quantidade de quartos
+# Visualizando a distribuição de preços das casas por quantidade de quartos
 
 
 ```{r}
@@ -57,11 +58,9 @@ theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis
 
 ___
 
-# ____________________________________________________
 
 
-
-### Visualizando a distribuição de preços das casas por quantidade de salas
+# Visualizando a distribuição de preços das casas por quantidade de salas
 
 ```{r}
 ggplot(df, aes(x = df$`media numero de salas`, y=df$`valor da casa`)) + geom_point(color="dodgerblue3") + theme_gdocs() +
@@ -78,10 +77,9 @@ theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis
 
 ___
 
-# ____________________________________________________
 
 
-### Visualizando a distribuição de salas por quantidade de quartos
+# Visualizando a distribuição de salas por quantidade de quartos
 
 
 ```{r}
@@ -99,10 +97,9 @@ theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis
 
 ___
 
-# ____________________________________________________
 
 
-### Visualizando distribuição do preço da casa baseado pela idade da mesma
+# Visualizando distribuição do preço da casa baseado pela idade da mesma
 
 
 ```{r}
@@ -118,10 +115,8 @@ theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis
 
 ___
 
-# ____________________________________________________
 
-
-### Visualizando distribuição de preços da casa por tamanho da população da região
+# Visualizando distribuição de preços da casa por tamanho da população da região
 
 ```{r}
 ggplot(df, aes(y=df$`valor da casa`, x=df$`populacao da regiao`)) + geom_point(color="dodgerblue3") + theme_gdocs() +
@@ -136,10 +131,9 @@ theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis
 
 ___
 
-# ____________________________________________________
 
 
-### Visualizando correlações entre as variáveis
+# Visualizando correlações entre as variáveis
 
 
 ```{r}
@@ -151,10 +145,9 @@ ggcorr(df, label = T, hjust = 0.85)
 
 ___
 
-# ____________________________________________________
 
 
-### Filtrando variáveis significantes para o modelo
+# Filtrando variáveis significantes para o modelo
 
 ```{r}
 Y <-  df$`valor da casa`

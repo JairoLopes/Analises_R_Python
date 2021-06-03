@@ -1,10 +1,7 @@
 ---
 title: "Análise dos criptoativos desde 29/04/2013 até 27/02/2021"
 author: "Jairo Lopes"
-output:
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
+output: rmdformats::readthedown
 ---
 
 ```{r setup, include=FALSE}
@@ -19,7 +16,7 @@ df <- read_csv("AllCoins.csv")
 ```
 
 
-
+![](crypto.jpg)
 
 
 
@@ -33,7 +30,7 @@ A criptomoeda é um código virtual que pode ser convertido em valores reais. Ge
 
 Sua negociação se dá pela internet, sem burocracias e intermediários, caracterizada pela ausência de um sistema monetário regulamentado e da submissão a uma autoridade financeira — por exemplo, o Banco Central do Brasil.
 
-## Visão geral do dataset
+# Visão geral do dataset
 
 ```{r}
 colnames(df) <- c("Ativo","Data","Maxima dia","Minima dia","Valor abertura","Valor fechamento","Volume","Valor de mercado")
@@ -44,14 +41,14 @@ df %>% head(4) %>% knitr::kable()
 
 ___
 
-## Verificando dados nulos
+# Verificando dados nulos
 
 ```{r}
 df %>% is.na() %>% colSums() %>% knitr::kable()
 ```
 
 
-## Verificando as 10 moedas com o maior valor de mercado dos ultimos 5 meses
+# Verificando as 10 moedas com o maior valor de mercado dos ultimos 5 meses
 
 ```{r}
 df %>% filter( df$Data >= df$Data %>%  max() - (dweeks(4)*5) )  %>% arrange(desc(`Valor de mercado`)) %>% group_by(Ativo) %>% summarise(`Valor de mercado`=mean(`Valor de mercado`)) %>% arrange(desc(`Valor de mercado`)) %>% head(10) %>% knitr::kable()
@@ -61,7 +58,7 @@ df %>% filter( df$Data >= df$Data %>%  max() - (dweeks(4)*5) )  %>% arrange(desc
 ___
 
 
-## Verificando diferença da máxima histórica para a mínima histórica de cada moeda ordenadas pela porcentagem de aumento
+# Verificando diferença da máxima histórica para a mínima histórica de cada moeda ordenadas pela porcentagem de aumento
 
 ```{r}
 df %>% group_by(Ativo) %>% summarise("Minima historica"=min(`Minima dia`), "Maxima historica"=max(`Maxima dia`), "Aumento"=str_c(round(((max(`Maxima dia`) - min(`Minima dia`)) / min(`Minima dia`))*100, 1),"%")) %>% arrange(desc(Aumento)) %>% head(10) %>% knitr::kable()
@@ -73,7 +70,7 @@ Notamos que todas as moedas tiveram um aumento considerável no decorrer do temp
 ___
 
 
-## Verificando o valor de abertura e fechamento no dia da máxima histórica
+# Verificando o valor de abertura e fechamento no dia da máxima histórica
 
 ```{r}
 lista <- list()
@@ -98,7 +95,7 @@ ___
 
 
 
-## Verificando o valor de abertura e fechamento no dia da mínima histórica
+# Verificando o valor de abertura e fechamento no dia da mínima histórica
 
 ```{r}
 lista2 <- list()
@@ -118,7 +115,7 @@ AberturaFechamentoMin %>% filter(`Minima dia` < `Valor fechamento`) %>% arrange(
 
 ___
 
-## Visualizando o quanto o valor de mercado influencia no preço dos ativos
+# Visualizando o quanto o valor de mercado influencia no preço dos ativos
 
 ```{r}
 dfFiltrado <- df%>%filter(`Valor de mercado` > 0 & `Valor fechamento` > 0)
@@ -131,7 +128,7 @@ Como podemos ver, o valor de mercado(Marketcap) tem total influência no preço 
 ___
 
 
-## Visualizando o quanto que o valor de mercado subiu no decorrer do tempo das 5 moedas com maior media de valor de mercado
+# Visualizando o quanto que o valor de mercado subiu no decorrer do tempo das 5 moedas com maior media de valor de mercado
 
 ```{r}
 marketcapAtivos <- df %>% group_by(Ativo) %>% summarise(media=mean(`Valor de mercado`)) %>% arrange(desc(media)) %>% head(5) %>% select(Ativo)
@@ -146,7 +143,7 @@ theme(axis.text.x = element_text(angle = 10))
 como podemos ver, a dominância do bitcoin é absurda
 ___
 
-## Visualizando quem tem o maior valor de mercado atualmente
+# Visualizando quem tem o maior valor de mercado atualmente
 
 ```{r}
 ggplot(dfMkt, aes(x = dfMkt$Ativo, y = dfMkt$`Valor de mercado`, fill=Ativo)) + geom_bar(stat="sum") +
@@ -155,7 +152,7 @@ labs(x="Ativo", y="Valor de mercado", title="Visualizando o marketcap dos 5 prim
 
 ___
 
-## Focando o Bitcoin
+# Focando o Bitcoin
 Criada uma variável que calcula a oscilação diaria do bitcoin desde 2013 até 2021 para posteriores análises
 
 
@@ -179,7 +176,7 @@ df2[,-6] %>% head(5) %>% knitr::kable()
 
 ___
 
-## Visualizando as oscilações do bitcoin
+# Visualizando as oscilações do bitcoin
 
 ```{r}
 ggplot(df2, aes(x=Data, y=`Oscilacao em %`, color=Positivo_Negativo)) + geom_line() +

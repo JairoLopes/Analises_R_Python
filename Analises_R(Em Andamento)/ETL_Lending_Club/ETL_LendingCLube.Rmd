@@ -1,8 +1,10 @@
 ---
-title: "Untitled"
+title: "ETL Lending CLub"
 author: "Jairo Lopes"
-date: "05/05/2021"
-output: html_document
+output:
+  prettydoc::html_pretty:
+    theme: hpstr
+    highlight: github
 ---
 
 ```{r setup, include=FALSE}
@@ -24,11 +26,15 @@ df$`atende criterios` <- df$`atende criterios` %>% as_factor()
 df$`pagou de volta` <- df$`pagou de volta` %>% as_factor()
 ```
 
-# Resumo
-Para este projeto, será analisado dados reais de uma empresa americana de empréstimos chamada Lending Club. Lending club conecta pessoas que precisam de dinheiro(mutuários) com pessoas que têm dinheiro(investidores), porém, como investidor, você gostaria de investir em pessoas que mostraram um perfil de ter uma alta probabilidade de pagá-lo de volta. Será criado um modelo que ajude a prever isso.
+# O que é Lending Club
+Lending club é uma empresa americana de empréstimos que conecta pessoas que precisam de dinheiro(mutuários) com pessoas que têm dinheiro(investidores).
+
+Será analisado dados reais da Lending Club a fim de extrair informações relevantes.
 
 
-### Visão geral do dataset
+
+
+# Visão geral do dataset
 
 ```{r}
 
@@ -38,7 +44,7 @@ df %>% head %>% knitr::kable()
 
 ___
 
-### Verificando dados faltantes
+# Verificando dados faltantes
 
 ```{r}
 df %>% is.na %>% colSums %>% knitr::kable()
@@ -48,7 +54,7 @@ df %>% is.na %>% colSums %>% knitr::kable()
 ___
 
 
-### Visualizando distribuição do objetivo do empréstimo por quitação do mesmo
+# Visualizando distribuição do objetivo do empréstimo por quitação do mesmo
 
 ```{r}
 ggplot(df, aes(x=`pontuacao de credito`, fill=`atende criterios`)) + geom_histogram() +
@@ -60,7 +66,7 @@ Obs: Podemos notar que a maioria das pessoas atendem aos critérios da empresa p
 
 ___
 
-### Visualizando quem pagou o débito baseado na sua pontuação do lending club
+# Visualizando quem pagou o débito baseado na sua pontuação do lending club
 
 
 ```{r}
@@ -75,7 +81,7 @@ Obs: É notável que a maioria das pessoas tem uma pontuação por volta dos 700
 ___
 
 
-### Visualizando distribuição do objetivo do empréstimo por quitação do mesmo
+# Visualizando distribuição do objetivo do empréstimo por quitação do mesmo
 
 ```{r}
 ggplot(df, aes(x=df$`objetivo do emprestimo`, fill=`pagou de volta`)) + geom_bar(position = "dodge", color="dodgerblue") +
@@ -90,7 +96,7 @@ theme_calc() + theme(axis.text.x = element_text(angle = 20))
 ___
 
 
-### Visualizando pontuação de crédito baseado na taxa de juros
+# Visualizando pontuação de crédito baseado na taxa de juros
 
 ```{r}
 ggplot(df, aes(x=df$`pontuacao de credito`, y=df$`juros do emprestimo`)) + geom_point(color="dodgerblue")  +
@@ -104,7 +110,7 @@ labs(x="Pontuação de crédito", y="Juros do emprestimo")
 ___
 
 
-## Taxa de juros do empréstimo baseado na renda anual do cliente
+# Taxa de juros do empréstimo baseado na renda anual do cliente
 
 
 ```{r}
@@ -117,9 +123,7 @@ labs(x="renda atual", y="juros do emprestimo") + theme_light()
 ___
 
 
-# Agrupamentos
-
-### agrupando média de quantidade de consultorias que o cliente teve durante o semestre por quitação de dívidas
+# agrupando média de quantidade de consultorias que o cliente teve durante o semestre por quitação de dívidas
 
 ```{r}
 df %>% group_by(`pagou de volta`) %>% summarise("media consultas em 6 meses"=mean(`qtd consultas em seis meses`)) %>% knitr::kable()
@@ -129,7 +133,7 @@ df %>% group_by(`pagou de volta`) %>% summarise("media consultas em 6 meses"=mea
 
 ___
 
-### Agrupando média de pontuação no lending club por quitação de dívidas
+# Agrupando média de pontuação no lending club por quitação de dívidas
 
 ```{r}
 df %>% group_by(`pagou de volta`) %>% summarise("Media de pontuacao"=mean(`pontuacao de credito`)) %>% knitr::kable()
