@@ -1,0 +1,54 @@
+/** 
+#004d99  - TITULOS_AZUL
+#262626  - BARRA LETERAL CINZA
+**/
+
+#sidebar {
+    color: #D9AB16;
+    background: #262626;
+}
+
+#sidebar h2 {
+    color: #FFFFFF;
+    background-color: #004d99;
+}
+
+#sidebar a {
+    color: #f1f3f3;
+}
+
+#sidebar a:hover {
+    background-color: #3F4548;
+    color: #FFFFFF;
+}
+
+
+
+/* TITULOS */
+
+
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+    background-color: #004d99;
+}
+
+#main .nav-pills > li > a:hover {
+    background-color: #004d99;
+}
+
+h1, h2, h3, h4, h5, h6, legend {
+    color: #004d99;
+}
+
+#nav-top span.glyphicon {
+    color: #004d99;
+}
+
+#table-of-contents header {
+    color: #22983B;
+}
+
+#table-of-contents h2 {
+    background-color: #22983B;
+}

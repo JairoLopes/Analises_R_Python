@@ -1,10 +1,9 @@
 ---
 title: "ETL Lending CLub"
 author: "Jairo Lopes"
-output:
-  prettydoc::html_pretty:
-    theme: hpstr
-    highlight: github
+output: rmdformats::readthedown
+highlight: tango
+css: "style.css"
 ---
 
 ```{r setup, include=FALSE}
@@ -34,11 +33,19 @@ Será analisado dados reais da Lending Club a fim de extrair informações relev
 
 
 
-# Visão geral do dataset
+# Visão geral do dataset {.tabset}
+
+## Primeira metade do dataset
 
 ```{r}
+df[,1:7] %>% head %>% knitr::kable()
+```
 
-df %>% head %>% knitr::kable()
+
+## Segunda metade do dataset
+
+```{r}
+df[,8:14] %>% head %>% knitr::kable()
 ```
 
 
