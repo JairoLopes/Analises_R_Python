@@ -1,10 +1,8 @@
 ---
 title: "Análise venda de imóveis"
 author: "Jairo Lopes"
-output:
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
+output: rmdformats::readthedown
+css: "style.css"
 ---
 
 ```{r setup, include=FALSE}
@@ -24,7 +22,7 @@ Este projeto fará uma análise exploratória dos dados de um dataset de venda d
 
 
 
-# Visão geral do dataset¶
+# Visão geral do dataset
 Verificando quantidade de registros e de colunas respectivamente do conjunto de dados
 
 ```{r}
@@ -140,30 +138,155 @@ ___
 ggcorr(df, label = T, hjust = 0.85)
 ```
 
-**OBS:** O numero de quartos nao tem uma correlação forte com o valor da casa
+**OBS:** As maiores correlações com a variavel "valor da casa" sao: **populacao da regiao, idade da casa, lucro de venda e numero de salas** 
 
 
 ___
 
+# Machine Learning
 
+## Filtrando variáveis significantes para o modelo
+Três modelos serão criados, o **modelo1** com as variaveis `lucro de venda` e `idade das casas`.
 
-# Filtrando variáveis significantes para o modelo
+O **modelo2** com as variaveis `lucro de venda`, `idade das casas` e `populacao da regiao`.
+
+O **modelo3** com as variaveis `lucro de venda`, `idade das casas`, `populacao da regiao` e `numero de salas`.
+
 
 ```{r}
-Y <-  df$`valor da casa`
-x1 <- df$`media de lucro de venda`
-x2 <- df$`media idade das casas`
-x3 <- df$`media numero de salas`
-x4 <- df$`populacao da regiao`
+modelo1 <- lm(`valor da casa` ~ -1 + `media de lucro de venda` + `media idade das casas`, data = df)
+modelo2 <- lm(`valor da casa` ~ -1 + `media de lucro de venda` + `media idade das casas` + `populacao da regiao`, data = df)
+modelo3 <- lm(`valor da casa` ~ -1 + `media de lucro de venda` + `media idade das casas` + `populacao da regiao` + `media numero de salas`, data = df)
 
-
-model <- lm(Y ~ x1+ x2 + x3 + x4)
-model
 ```
 
+# Avaliando desempenho de cada modelo {.tabset}
+## Modelo1
+```{r}
+modelo1 %>% summary
+```
+
+**OBS 1: **Quase **96%** dos dados do valor da casa, podem ser explicados pelas variáveis preditoras escolhidas
+
+**OBS 2: **Também e perceptivel que a margem de erros das duas variáveis são proximas a zero
+
+___
+
+## Modelo2
+```{r}
+modelo2 %>% summary
+```
+
+**OBS 1: ** **96,43%** dos dados do valor da casa, podem ser explicados pelas variáveis preditoras escolhidas
+
+**OBS 2: **Também e perceptivel que a margem de erros das **três** variáveis são proximas a zero
+
+___
+
+## Modelo3
+```{r}
+modelo3 %>% summary
+```
+
+**OBS 1: ** Não há diferença se comparado ao modelo dois no que diz respeito a explicação dos dados
+
+**OBS 2: **É notavel que a variavel "numero de salas" tem uma margem de erro consideravelmente maior que as outras 3 variaveis
+
+___
+
+# Visualizando o desempenho das predições dos 3 modelos {.tabset}
+Será comparado os resultados estimados com os resultados originais em um gráfico de dispersão.
+
+## Predições do modelo 1
+
+```{r}
+pred1 <- tibble(dadosReais=df$`valor da casa`, predicoes=modelo1$fitted.values, residuosPadronizados=rstandard(modelo1))
+
+ggplot(pred1, aes(x=dadosReais, y=predicoes)) + geom_point(color="seagreen4") + theme_gdocs()
+```
+
+**OBS: **Criado com as variáveis `valor da casa`, `media de lucro de venda` e `media idade das casas`
+
+___
+
+## Predições do modelo 2
+
+```{r}
+pred2 <- tibble(N=1:5000, dadosReais=df$`valor da casa`, predicoes=modelo2$fitted.values, residuos=modelo2$residuals, residuosPadronizados=rstandard(modelo2))
+
+ggplot(pred2, aes(x=dadosReais, y=predicoes)) + geom_point(color="seagreen4") + theme_gdocs()
+```
+
+**OBS: **Criado com as variáveis `valor da casa` e `media de lucro de venda`
+
+___
+
+## Predições do modelo 3
+
+```{r}
+pred3 <- tibble(dadosReais=df$`valor da casa`, predicoes=modelo3$fitted.values, residuosPadronizados=rstandard(modelo3))
+
+ggplot(pred3, aes(x=dadosReais, y=predicoes)) + geom_point(color="seagreen4") + theme_gdocs()
+```
+
+**OBS: **Criado com as variáveis `valor da casa`, `media de lucro de venda`, `media idade das casas`, `populacao da regiao`, `media numero de salas`
+
+___
+
+# Observações sobre as predições
+Claramente o modelo2 teve um desempenho melhor, justamente por possuir as duas variáveis de maior correlação com a variável valor da casa
+
+___
+
+# Verificando possiveis outliers do melhor modelo
+Foi filtrado todos os residuos padronizados com valor maior ou igual a **1.96**, ou, menor ou igual **-1.96**
+
+```{r}
+pred2 %>% filter(residuosPadronizados >= 1.96 | residuosPadronizados <= -1.96) %>% nrow()
+```
+**OBS:** Dos 5 mil registros, 241 são outliers
+
+___
 
 
+# Comparando desempenho do modelo2 com e sem outliers
+Armazenando a identificação dos outliers identificados dentro de uma variavel vetor, e usando esta variavel para remover os outliers do modelo.
 
+```{r}
+outliers <- pred2 %>% filter(residuosPadronizados >= 1.96 | residuosPadronizados <= -1.96) %>% select(N)
+outliers <- outliers$N
+
+reaisSemOutliers <- df$`valor da casa`[-outliers]
+predSemOutliers <- modelo2$fitted.values[-outliers]
+semOutliers <- tibble(dadosReais=reaisSemOutliers, predicoes=predSemOutliers)
+
+modelo2SemOut <- ggplot(semOutliers, aes(x=dadosReais, y=predicoes)) + geom_point(color="deeppink4") + theme_gdocs()
+
+modelo2ComOut <- ggplot(pred2, aes(x=dadosReais, y=predicoes)) + geom_point(color="deeppink4") + theme_gdocs()
+  
+```
+
+# Visualizando o desempenho do modelo2 com e sem outliers {.tabset}
+
+## Modelo2 COM outliers
+```{r}
+modelo2ComOut + guides(size = FALSE) + theme(plot.margin = margin(1,.8,2,.8, "cm"))
+```
+
+**OBS:** Extremidades mais dispersas.
+
+___
+
+
+## Modelo2 SEM outliers
+
+```{r}
+modelo2SemOut +  guides(size = FALSE) + theme(plot.margin = margin(2.5,.8,2,.8, "cm"))
+```
+
+**OBS:** Extremidades mais concentradas
+
+___
 
 
 
