@@ -2,4 +2,4 @@
 ### Obs: Preview do projeto clicando no link: https://rpubs.com/Lopes_/777202
 
 
-#### Este projeto faz uma análise de um conjunto de dados **fictícios** de um dataset com informações de imóveis, afim de extrair informações relevantes.
+#### Este projeto fará uma análise exploratória dos dados de um dataset de venda de casas, para realizar a predição de preços de novas casas com caracteristicas semelhantes as ja vendidass.

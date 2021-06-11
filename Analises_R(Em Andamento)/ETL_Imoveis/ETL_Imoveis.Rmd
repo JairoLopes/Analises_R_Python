@@ -18,7 +18,7 @@ colnames(df) <- c('media de lucro de venda', 'media idade das casas', 'media num
 ```
 
 # Resumo
-Este projeto fará uma análise exploratória dos dados de um dataset de venda de casas, para realizar a predição de preços de novas casas com caracteristicas semelhantes as ja vendidas
+Este projeto fará uma breve análise exploratória dos dados de um dataset de venda de casas, para realizar a predição de preços de novas casas com caracteristicas semelhantes as ja vendidas
 
 
 
@@ -28,6 +28,7 @@ Verificando quantidade de registros e de colunas respectivamente do conjunto de 
 ```{r}
 df %>% str %>% knitr::kable()
 ```
+
 
 ```{r}
 df %>% head(4) %>% knitr::kable()
