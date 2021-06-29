@@ -6,11 +6,12 @@ css: "style.css"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 library(tidyverse)
 library(ggthemes)
 library(GGally)
 library(RColorBrewer)
+library(plotly)
 options(scipen = 999)
 
 df <- read_csv("House.csv")
@@ -43,13 +44,10 @@ ___
 
 
 ```{r}
-
-
-ggplot(df, aes(x=df$`media numero de quartos`, y=df$`valor da casa`)) + geom_point(color="cyan4") + theme_calc() +
-  
-labs(x="Numero de quartos",y="Valor da casa", parse = F, colour = "black", size = 12,family="Times New Roman") +
-theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+plot_ly(data = df, x=~`media numero de quartos`, y=~`valor da casa`, type = "scatter") %>%
+layout(xaxis=list(title="Numero de quartos"), yaxis=list(title="Valor da casa"))
 ```
+
 
 
 **OBS:** Não há grande variação de preço por numero de quartos, mas da pra perceber que casas que contém em media 2 quartos, são um pouco mais baratas em seu **valor máximo**
@@ -62,12 +60,10 @@ ___
 # Visualizando a distribuição de preços das casas por quantidade de salas
 
 ```{r}
-ggplot(df, aes(x = df$`media numero de salas`, y=df$`valor da casa`)) + geom_point(color="dodgerblue3") + theme_gdocs() +
-scale_x_continuous(breaks = seq(3, 11, by=1)) +
-  
-labs(x="Numero de salas",y="Valor da casa", parse = F, colour = "black", size = 12,family="Times New Roman") +
-theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+plot_ly(data = df, x=~`media numero de salas`, y=~`valor da casa`, type = "scatter", marker=list(color="seagreen"))
 ```
+
+
 
 **OBS:** obviamente, quanto maior a quantidade de salas, maior o preço da casa, em alguns poucos casos, casas com numero menor de salas sao mais caras
 
@@ -82,11 +78,10 @@ ___
 
 
 ```{r}
-ggplot(df, aes(x=df$`media numero de quartos`, y=df$`media numero de salas`)) + geom_point(color="hotpink4") + theme_gdocs() +
-
-labs(x="Numero de quartos",y="Numero de salas", parse = F, colour = "black", size = 12,family="Times New Roman") +
-theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+plot_ly(data=df, x=~`media numero de quartos`, y=~`media numero de salas`, type="scatter", marker=list(color="darkmagenta"))
 ```
+
+
 
 
 **OBS:** Podemos ver que todas as casas com 5 quartos ou mais, possuem no mínimo 7 salas
@@ -102,11 +97,10 @@ ___
 
 
 ```{r}
-ggplot(df, aes(x=df$`media idade das casas`, y=df$`valor da casa`)) + geom_point(color="magenta4") + theme_gdocs() +
-scale_x_continuous(breaks = seq(0,10,1)) +
-labs(x="Idade do imóvel",y="Valor", parse = F, colour = "black", size = 12,family="Times New Roman") +
-theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+plot_ly(data=df, x=~`media idade das casas`, y=~`valor da casa`, type="scatter", marker=list(color="darkcyan"))
 ```
+
+
 
 
 **OBS:** E mais uma amostra linear onde indica que, quanto mais velha a casa, maior o seu valor
@@ -118,10 +112,9 @@ ___
 # Visualizando distribuição de preços da casa por tamanho da população da região
 
 ```{r}
-ggplot(df, aes(y=df$`valor da casa`, x=df$`populacao da regiao`)) + geom_point(color="dodgerblue3") + theme_gdocs() +
-labs(x="População da região",y="Valor do imóvel", parse = F, colour = "black", size = 12,family="Times New Roman") +
-theme(text=element_text(size=14, family="Times New Roman", colour="black"), axis.text=element_text(family="Times New Roman", size=14,colour="black"))
+plot_ly(data=df, x=~`populacao da regiao`, y=~`valor da casa`, type="scatter", marker=list(color="firebrick"))
 ```
+
 
 
 **OBS:** Quanto maior a população da região, maior o valor do imóvel
@@ -203,8 +196,10 @@ Será comparado os resultados estimados com os resultados originais em um gráfi
 ```{r}
 pred1 <- tibble(dadosReais=df$`valor da casa`, predicoes=modelo1$fitted.values, residuosPadronizados=rstandard(modelo1))
 
-ggplot(pred1, aes(x=dadosReais, y=predicoes)) + geom_point(color="seagreen4") + theme_gdocs()
+plot_ly(data=pred1, x=~dadosReais, y=~predicoes, type = "scatter", marker=list(color="brown"))
 ```
+
+
 
 **OBS: **Criado com as variáveis `valor da casa`, `media de lucro de venda` e `media idade das casas`
 
@@ -215,8 +210,10 @@ ___
 ```{r}
 pred2 <- tibble(N=1:5000, dadosReais=df$`valor da casa`, predicoes=modelo2$fitted.values, residuos=modelo2$residuals, residuosPadronizados=rstandard(modelo2))
 
-ggplot(pred2, aes(x=dadosReais, y=predicoes)) + geom_point(color="seagreen4") + theme_gdocs()
+plot_ly(data=pred2, x=~dadosReais, y=~predicoes, type="scatter", marker=list(color="brown"))
 ```
+
+
 
 **OBS: **Criado com as variáveis `valor da casa` e `media de lucro de venda`
 
@@ -227,8 +224,10 @@ ___
 ```{r}
 pred3 <- tibble(dadosReais=df$`valor da casa`, predicoes=modelo3$fitted.values, residuosPadronizados=rstandard(modelo3))
 
-ggplot(pred3, aes(x=dadosReais, y=predicoes)) + geom_point(color="seagreen4") + theme_gdocs()
+plot_ly(data=pred3, x=~dadosReais, y=~predicoes, type="scatter", marker=list(color="brown"))
 ```
+
+
 
 **OBS: **Criado com as variáveis `valor da casa`, `media de lucro de venda`, `media idade das casas`, `populacao da regiao`, `media numero de salas`
 
@@ -260,19 +259,17 @@ outliers <- outliers$N
 reaisSemOutliers <- df$`valor da casa`[-outliers]
 predSemOutliers <- modelo2$fitted.values[-outliers]
 semOutliers <- tibble(dadosReais=reaisSemOutliers, predicoes=predSemOutliers)
-
-modelo2SemOut <- ggplot(semOutliers, aes(x=dadosReais, y=predicoes)) + geom_point(color="deeppink4") + theme_gdocs()
-
-modelo2ComOut <- ggplot(pred2, aes(x=dadosReais, y=predicoes)) + geom_point(color="deeppink4") + theme_gdocs()
-  
 ```
 
 # Visualizando o desempenho do modelo2 com e sem outliers {.tabset}
 
 ## Modelo2 COM outliers
+
 ```{r}
-modelo2ComOut + guides(size = FALSE) + theme(plot.margin = margin(1,.8,2,.8, "cm"))
+plot_ly(data=pred2, x=~dadosReais, y=~predicoes, type="scatter", marker=list(color="#006680"))
 ```
+
+
 
 **OBS:** Extremidades mais dispersas.
 
@@ -282,7 +279,7 @@ ___
 ## Modelo2 SEM outliers
 
 ```{r}
-modelo2SemOut +  guides(size = FALSE) + theme(plot.margin = margin(2.5,.8,2,.8, "cm"))
+plot_ly(data=semOutliers, x=~dadosReais, y=~predicoes, type="scatter", marker=list(color="#006680"))
 ```
 
 **OBS:** Extremidades mais concentradas

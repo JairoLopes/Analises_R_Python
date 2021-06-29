@@ -1,5 +1,5 @@
 /** 
-#00802b  - TITULOS_VERDE
+#00802b  - TITULOS_AZUL
 #262626  - BARRA LETERAL CINZA
 **/
 
@@ -10,7 +10,7 @@
 
 #sidebar h2 {
     color: #FFFFFF;
-    background-color: #00802b;
+    background-color: #008ae6;
 }
 
 #sidebar a {
@@ -30,15 +30,15 @@
 #main .nav-pills > li.active > a,
 #main .nav-pills > li.active > a:hover,
 #main .nav-pills > li.active > a:focus {
-    background-color: #00802b;
+    background-color: #008ae6;
 }
 
 #main .nav-pills > li > a:hover {
-    background-color: #00802b;
+    background-color: #008ae6;
 }
 
 h1, h2, h3, h4, h5, h6, legend {
-    color: #00802b;
+    color: #333333;
 }
 
 #nav-top span.glyphicon {
@@ -46,7 +46,7 @@ h1, h2, h3, h4, h5, h6, legend {
 }
 
 #table-of-contents header {
-    color: #22983B;
+    color: #262626;
 }
 
 #table-of-contents h2 {
