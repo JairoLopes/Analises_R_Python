@@ -1,0 +1,11 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/777207/58fdc372cefc476d843cd094f9202de0
+bundleId: https://api.rpubs.com/api/v1/document/777207/58fdc372cefc476d843cd094f9202de0
+url: http://rpubs.com/Lopes_/777207
+when: 1625017161.50892
+lastSyncTime: 1625017161.50894

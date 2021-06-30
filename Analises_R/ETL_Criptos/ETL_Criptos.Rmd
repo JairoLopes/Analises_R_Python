@@ -2,12 +2,14 @@
 title: "Análise dos criptoativos desde 29/04/2013 até 27/02/2021"
 author: "Jairo Lopes"
 output: rmdformats::readthedown
+css: "style.css"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = T, message = F, warning = F)
 library(tidyverse)
 library(lubridate)
+library(plotly)
 library(ggthemes)
 options(scipen = 999)
 
@@ -119,9 +121,11 @@ ___
 
 ```{r}
 dfFiltrado <- df%>%filter(`Valor de mercado` > 0 & `Valor fechamento` > 0)
-ggplot(dfFiltrado, aes(y=`Valor de mercado`, x=`Valor fechamento`, size=`Valor fechamento`)) + geom_point(color="dodgerblue") + theme_calc()
 
+plot_ly(data=dfFiltrado, x=~`Valor fechamento`, y=~`Valor de mercado`, type = "scatter", marker=list(color="brown"))
 ```
+
+
 
 Como podemos ver, o valor de mercado(Marketcap) tem total influência no preço das criptos
 
@@ -135,22 +139,27 @@ marketcapAtivos <- df %>% group_by(Ativo) %>% summarise(media=mean(`Valor de mer
 
 dfMkt <- df %>% filter(Ativo==marketcapAtivos$Ativo) 
 
-ggplot(dfMkt, aes(x=Data, y=`Valor de mercado`, color=Ativo)) + geom_line() +
-scale_x_date(date_breaks = "1 year", date_labels = "%b %Y") + theme_fivethirtyeight() +
-theme(axis.text.x = element_text(angle = 10))
+plot_ly(data=dfMkt, x=~Data, y=~`Valor de mercado`, color = ~Ativo, colors = "Set1", mode = "lines")
 ```
 
-como podemos ver, a dominância do bitcoin é absurda
+
+Como podemos ver, a dominância do bitcoin é absurda
+
 ___
+
 
 # Visualizando quem tem o maior valor de mercado atualmente
 
 ```{r}
-ggplot(dfMkt, aes(x = dfMkt$Ativo, y = dfMkt$`Valor de mercado`, fill=Ativo)) + geom_bar(stat="sum") +
-labs(x="Ativo", y="Valor de mercado", title="Visualizando o marketcap dos 5 primeiros ativos") + theme_calc()
+dfMktAgrupado <- dfMkt %>% group_by(Ativo) %>% summarise("Valor de mercado"=sum(`Valor de mercado`))
+
+
+plot_ly(data=dfMktAgrupado, x=~Ativo, y=~`Valor de mercado`, color = ~Ativo, type = "bar", colors = "Dark2") %>% layout(title="27/02/21")
 ```
 
+
 ___
+
 
 # Focando o Bitcoin
 Criada uma variável que calcula a oscilação diaria do bitcoin desde 2013 até 2021 para posteriores análises
@@ -178,11 +187,16 @@ ___
 
 # Visualizando as oscilações do bitcoin
 
+
 ```{r}
-ggplot(df2, aes(x=Data, y=`Oscilacao em %`, color=Positivo_Negativo)) + geom_line() +
-scale_x_date(date_breaks = "1 year", date_labels = "%Y") + theme_fivethirtyeight()
+plot_ly(data=df2, x=~Data, y=~`Oscilacao em %`, color=~Positivo_Negativo, mode="lines", colors = "Set1")
 ```
+
+
 
 Bitcoin tem mostrado ser uma moeda pouco volátil se comparado as outras, com oscilações diárias estáveis com poucas exceções como no inicio de 2020 que chegou a desvalorizar quase 40%
 
+
+
 ___
+
