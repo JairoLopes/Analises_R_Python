@@ -8,10 +8,11 @@ css: "style.css"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 library(tidyverse)
-library(ggthemes)
 library(GGally)
 library(RColorBrewer)
 library(plotly)
+library(QuantPsyc)
+library(car)
 options(scipen = 999)
 
 df <- read_csv("House.csv")
@@ -139,7 +140,9 @@ ___
 
 # Machine Learning
 
-## Filtrando variáveis significantes para o modelo
+## Escolha de variáveis
+
+### Filtrando variáveis significantes para o modelo
 Três modelos serão criados, o **modelo1** com as variaveis `lucro de venda` e `idade das casas`.
 
 O **modelo2** com as variaveis `lucro de venda`, `idade das casas` e `populacao da regiao`.
@@ -188,8 +191,12 @@ modelo3 %>% summary
 
 ___
 
+
+
+___
+
 # Visualizando o desempenho das predições dos 3 modelos {.tabset}
-Será comparado os resultados estimados com os resultados originais em um gráfico de dispersão.
+Será comparado os resultados estimados com os resultados originais em um gráfico de dispersão para medir a linearidade das predições com os dados reais..
 
 ## Predições do modelo 1
 
@@ -201,7 +208,7 @@ plot_ly(data=pred1, x=~dadosReais, y=~predicoes, type = "scatter", marker=list(c
 
 
 
-**OBS: **Criado com as variáveis `valor da casa`, `media de lucro de venda` e `media idade das casas`
+**OBS: **Criado com as variáveis independentes: `media de lucro de venda` e `media idade das casas`
 
 ___
 
@@ -215,7 +222,7 @@ plot_ly(data=pred2, x=~dadosReais, y=~predicoes, type="scatter", marker=list(col
 
 
 
-**OBS: **Criado com as variáveis `valor da casa` e `media de lucro de venda`
+**OBS: **Criado com as variáveis independentes: `media de lucro de venda`, `media idade das casas` e `populacao da regiao` 
 
 ___
 
@@ -229,7 +236,7 @@ plot_ly(data=pred3, x=~dadosReais, y=~predicoes, type="scatter", marker=list(col
 
 
 
-**OBS: **Criado com as variáveis `valor da casa`, `media de lucro de venda`, `media idade das casas`, `populacao da regiao`, `media numero de salas`
+**OBS: **Criado com as variáveis independentes: `media de lucro de venda`, `media idade das casas`, `populacao da regiao`, `media numero de salas`
 
 ___
 
@@ -238,13 +245,23 @@ Claramente o modelo2 teve um desempenho melhor, justamente por possuir as duas v
 
 ___
 
+
+
 # Verificando possiveis outliers do melhor modelo
 Foi filtrado todos os residuos padronizados com valor maior ou igual a **1.96**, ou, menor ou igual **-1.96**
+
 
 ```{r}
 pred2 %>% filter(residuosPadronizados >= 1.96 | residuosPadronizados <= -1.96) %>% nrow()
 ```
 **OBS:** Dos 5 mil registros, 241 são outliers
+
+
+## Resumo dos resíduos padronizados
+
+```{r}
+rstandard(modelo2) %>% summary
+```
 
 ___
 
@@ -254,6 +271,7 @@ Armazenando a identificação dos outliers identificados dentro de uma variavel 
 
 ```{r}
 outliers <- pred2 %>% filter(residuosPadronizados >= 1.96 | residuosPadronizados <= -1.96) %>% select(N)
+
 outliers <- outliers$N
 
 reaisSemOutliers <- df$`valor da casa`[-outliers]
@@ -287,4 +305,63 @@ plot_ly(data=semOutliers, x=~dadosReais, y=~predicoes, type="scatter", marker=li
 ___
 
 
+# Individuos influentes
+Dados influentes sao dados que geram impacto no modelo, que caso sejam retirados, pode haver alterações significativas.
+
+Será feita uma verificação se há outliers influentes, para isso, será utilizada a métrica **Distância de cook**.
+
+## Distância de cook
+A distância de cook nada mais é que uma forma de identificar se um certo dado é influente.
+
+Para saber se o valor da distância de cook indica um ponto influente, é necessário que o o valor da distancia de cook seja próximo, igual ou maior que 1.
+
+Ou seja, dados que possuem o valor da distância de cook semalhantes á `1.99`, `1.20`, `0.98`, são prováveis pontos influentes. E valores da distancia de cook semlhantes á `0.03`, `0.09`, `0.4`, são registros que **NÃO** são muio influentes, e que sua retirada nao deve causar muito impacto.
+
+## Visualizando distância de cook dos outliers
+
+```{r}
+pred2$distanciaCook <- cooks.distance(modelo2)
+outliers <- pred2 %>% filter(residuosPadronizados >= 1.96 | residuosPadronizados <= -1.96)
+
+
+plot_ly(data = outliers, x=~N, y=~distanciaCook, type = "scatter")
+```
+
+
+**OBS:** Apesar de **NÃO** haver valores que indicam forte influência entre os outliers, há dois indivíduos que são um pouco mais influentes que a maioria, os registros `129` e `963`. Caso tivessem valores mais elevados, não seriam removidos do modelo mesmo sendo outliers.
+
+
+___
+
+# Tunando o modelo2 {.tabset}
+Reaplicando o modelo2 sem outliers baseado nas análises realizadas, e fazendo uma comparação com o antigo modelo2 original
+
+```{r}
+outs <- pred2 %>% filter(residuosPadronizados >= 1.96 | residuosPadronizados <= -1.96) %>% select(N)
+outs <- outs$N
+
+
+modelo2SemOut <- lm(`valor da casa` ~ -1 + `media de lucro de venda` + `media idade das casas` + `populacao da regiao`, data = df[-outs,])
+```
+
+
+
+## Métricas do modelo SEM outliers
+
+```{r}
+modelo2SemOut %>% summary
+```
+
+**OBS: **De acordo com a métrica **Multiple R-squared**, `97.25%` dos dados do valor da casa, podem ser explicados pelas variáveis preditoras escolhidas **SEM** outliers
+
+
+## Métricas do modelo COM outliers
+
+```{r}
+modelo2 %>% summary
+```
+
+**OBS: **De acordo com a métrica **Multiple R-squared**, `96.43%` dos dados do valor da casa, podem ser explicados pelas variáveis preditoras escolhidas **COM** outliers
+
+___
 
