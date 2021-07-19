@@ -11,6 +11,11 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 options(scipen = 999)
 ```
 
+___
+
+![](_99764882_gettyimages-591853022.jpg)
+
+
 Neste projeto será feito uma análise exploratória de um conjunto de dados de uma empresa de publicidade, que contém o histórico de acesso dos clientes ao site, com o intuito de saber se um cliente  clicou ou não em um anúncio do site. Será criado um modelo que prevê se o cliente clicará ou não em um anúncio, baseado nos dados e histórico dos registros anteriores.
 
 ___
@@ -314,7 +319,7 @@ ___
 # Resultado das predições {.tabset}
 Será aplicado a partição que representa 20% do dataset, para avaliar como que o modelo reage com dados que ele nunca viu.
 
-Será gerado um gráfico de dispersão, que irá comparar os dados **reais** do conjunto de testes, com as predições do modelo, ou seja, irá comparar o que realmente aconteceu, com o que o modelo preveu, colorindo de tom esverdeado os dados **reais** do conjunto teste que são individuos que **CLICARAM** em anúncios, e coloririndo de tom avermelhado os dados **reais** do conjunto de teste que **NÃO CLICARAM**  nos anúncios.
+Será gerado um gráfico de dispersão, que irá comparar os dados **reais** do conjunto de testes com as predições do modelo, ou seja, irá comparar o que realmente aconteceu, com o que o modelo preveu, colorindo de tom esverdeado os dados **reais** do conjunto teste que são individuos que **CLICARAM** em anúncios, e colorindo de tom avermelhado os dados **reais** do conjunto de teste que **NÃO CLICARAM**  nos anúncios.
 
 A numeração entre 0 a 100, equivale a porcentagem de chance de um indivíduo clicar nos anúncios, esta numeração nada mais é que o resultado da predição do modelo final.
 

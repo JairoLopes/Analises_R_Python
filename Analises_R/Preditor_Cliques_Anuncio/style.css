@@ -10,7 +10,7 @@
 
 #sidebar h2 {
     color: #FFFFFF;
-    background-color: #008ae6;
+    background-color: #cc0066;
 }
 
 #sidebar a {
@@ -30,11 +30,11 @@
 #main .nav-pills > li.active > a,
 #main .nav-pills > li.active > a:hover,
 #main .nav-pills > li.active > a:focus {
-    background-color: #008ae6;
+    background-color: #cc0066;
 }
 
 #main .nav-pills > li > a:hover {
-    background-color: #008ae6;
+    background-color: #cc0066;
 }
 
 h1, h2, h3, h4, h5, h6, legend {
@@ -42,7 +42,7 @@ h1, h2, h3, h4, h5, h6, legend {
 }
 
 #nav-top span.glyphicon {
-    color: #00802b;
+    color: #cc0066;
 }
 
 #table-of-contents header {
