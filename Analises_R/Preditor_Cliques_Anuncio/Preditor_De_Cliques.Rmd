@@ -1,0 +1,352 @@
+---
+title: "Preditor de Cliques em Anúncios"
+author: "Jairo Lopes"
+date: "17/07/2021"
+output: rmdformats::readthedown
+css: "style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+options(scipen = 999)
+```
+
+Neste projeto será feito uma análise exploratória de um conjunto de dados de uma empresa de publicidade, que contém o histórico de acesso dos clientes ao site, com o intuito de saber se um cliente  clicou ou não em um anúncio do site. Será criado um modelo que prevê se o cliente clicará ou não em um anúncio, baseado nos dados e histórico dos registros anteriores.
+
+___
+
+# Importação dos pacotes necessários e do dataset.
+
+```{r}
+library(tidyverse)
+library(car)
+library(psych)
+library(DescTools)
+library(plotly)
+library(lubridate)
+
+df <- read_csv("advertising.csv")
+```
+
+___
+
+# Visão Geral do dataset importado, e informações adicionais
+
+```{r}
+df %>% head(3) %>% knitr::kable(align = "llllllll")
+```
+
+```{r}
+df %>% str
+```
+
+___
+
+# Renomeando e alterando os tipos das variáveis
+
+
+```{r}
+colnames(df) <- c('minutos diarios no site', 'idade', 'renda anual', 'cidade do cliente', 'sexo', 'nacionalidade',
+       'horario que saiu do site', 'clicou no anuncio')
+
+df$sexo <- as_factor(df$sexo) %>% lvls_revalue(c("feminino","masculino")) %>% relevel(ref = "masculino")
+df$`horario que saiu do site` <- as.character(df$`horario que saiu do site`) %>% ymd_hms()
+df$`clicou no anuncio` <- as_factor(df$`clicou no anuncio`) %>% lvls_revalue(c("nao","sim"))
+
+df %>% head(3) %>% knitr::kable(align = "llllllll")
+```
+
+___
+
+
+# Verificando correlação entre as variáveis
+Com isso, podemos ter uma ideia das variáveis mais importantes para análise e para o modelo preditivo.
+
+```{r}
+pairs.panels(df[,c(8,1,2,3,5,7)])
+```
+
+**OBS:** É possivel notar que há 75% de correlação entre `clicou no anuncio` e `minutos no site`
+
+Há 49% de correlação entre `clicou no anuncio` e `idade`.
+
+48% de correlação entre `clicou no anuncio` e `renda anual`.
+
+Também é possivel notar que `sexo` e `horário em que saiu do site` tem pouquíssima correlação não so com `clicou no anuncio` mas também com todas as outras variáveis.
+
+___
+
+
+# Visualizando a distribuição de idade dos clientes
+
+```{r}
+plot_ly(data = df, x=~idade, type = "histogram")
+```
+
+
+**OBS:** A maioria dos clientes estão na faixa dos 28 aos 40 anos
+
+
+___
+
+
+# Visualizando quem clicou baseado na renda dos clientes e na idade
+
+```{r}
+plot_ly( data = df, x=~`renda anual`, y=~idade, type = "scatter", color = ~`clicou no anuncio`, colors="Set1" )
+```
+
+
+
+**OBS:** É nítido que quanto maior a renda do cliente, menos interesse em anúncios, também é possível notar que as pessoas mais velhas e com uma renda menor, são as que mais clicam em anúncios.
+
+
+___
+
+# Visualizando quantidade de tempo em minutos diários que os clientes navegam pelo site.  
+
+```{r}
+plot_ly(data=df, x=~`minutos diarios no site`, y=~idade, type = "scatter", color = ~`clicou no anuncio`, colors = c("darkmagenta","forestgreen"))
+```
+
+
+**OBS:** Curiosamente as pessoas que mais passam tempo navegando pelo site, são as que menos clicam nos anúncios
+
+
+___
+
+# Confirmando ausência de correlação significativa da variável sexo {.tabset}
+
+## Verificando média de minutos que o cliente passa no site por sexo
+
+```{r}
+df %>% group_by(sexo) %>% summarise("minutos diarios"=mean(`minutos diarios no site`), "idade"=mean(idade)) %>% knitr::kable(align = "lll", digits = 2)
+```
+
+
+**OBS:** Como esperado, não há tendência relevante, o sexo n tem significância em quem passa mais tempo no site, e nem na idade dos clientes
+
+
+___
+
+## Gráfico representativo
+
+```{r}
+plot_ly(data=df, x=~`minutos diarios no site`, y=~idade, type = "scatter", color = ~sexo, colors = c("mediumvioletred","forestgreen"))
+```
+
+
+**OBS:** Dados espalhados sem nenhum padrão, o que confirma que a variável `sexo` não tem significância para o modelo preditivo.
+
+
+___
+
+# Criando modelo
+O conjunto será particionado em dois, uma parte com 80% dos dados para treinar o modelo, e outra com 20% para testar o desempenho.
+
+Como foi confirmado no gráfico de correlação que as únicas variáveis preditoras significantes para o modelo são `minutos diarios no site`, `renda anual` e `idade` , será criado **modelos** com estas variáveis.
+
+Modelo 1: `minutos diarios no site`, `renda anual` e `idade`.
+
+Modelo 2: `minutos diarios no site` e `renda anual`.
+
+Modelo 3: apenas com `minutos diarios no site`.
+
+```{r}
+indexTreino <- sample( 1:nrow(df), round(nrow(df) * 0.8)  )
+dfTreino <- df[indexTreino,] %>% select(`minutos diarios no site`, `renda anual`, `idade`,  `clicou no anuncio`)
+dfTeste <- df[-indexTreino,] %>% select(`minutos diarios no site`, `renda anual`, `idade`,  `clicou no anuncio`)
+
+
+modelo1 <- glm(data = dfTreino, family = binomial(), formula = `clicou no anuncio` ~  `minutos diarios no site` + `renda anual` + idade)
+modelo2 <- glm(data = dfTreino, family = binomial(), formula = `clicou no anuncio` ~  `minutos diarios no site` + `renda anual`)
+modelo3 <- glm(data = dfTreino, family = binomial(), formula = `clicou no anuncio` ~  `minutos diarios no site`)
+```
+
+
+# Verificando desepenho dos modelos
+Será utilizado a métrica AIC e BIC para comparar desempenho dos 3 modelos, quanto menor o valor retornado por essas métricas, melhor o modelo.
+
+
+```{r}
+list( AIC(modelo1, modelo2, modelo3), BIC(modelo1, modelo2, modelo3) ) %>% knitr::kable(align = "ll")
+```
+
+**OBS:** Em ambas as métricas o modelo1 teve o melhor resultado.
+
+___
+
+# Analisando coeficientes do melhor modelo
+
+```{r}
+coef(modelo1)
+```
+
+
+**OBS:** `minutos diarios no site` e `renda anual` influenciam negativamente em quem clica no anuncio, ou seja, quanto maior a renda ou o tempo que o cliente navega no site, maior a chance dele **NÃO** clicar nos anúncios, já a `idade` influencia de forma positiva, portanto, quanto mais velho o indivíduo, maior as chances do mesmo clicar em anúncios.
+
+___
+
+
+# Verificando o quanto as variaveis preditoras explicam os resultados dos cliques
+Será utilizada a métrica do pseudo R quadrado, que dá a porcentagem do quanto as variáveis preditoras escolhidas explicam a variável a ser predita.
+
+```{r}
+PseudoR2(modelo1, which = "Nagelkerke")
+```
+**OBS:** As variáveis escolhidas explicam aproximadamente 80% dos resultados dos cliques em anúncios.
+
+
+___
+
+
+# Verificando Outliers
+Será verificado os valores dos resíduos padronizados, para identificar outliers, o resultado dos resíduos padronizados devem ser maiores que 2, ou menores que -2
+
+```{r}
+dfTreino$N <- 1:nrow(dfTreino)
+dfTreino$residuo_padronizado <- rstandard(modelo1)
+
+plot_ly(data = dfTreino, x=~N, y=~residuo_padronizado, marker=list(color="darkgreen"))
+```
+
+
+**OBS:** Podemos ver que alguns indivíduos são possíveis outliers
+
+___
+
+# Verificando Pontos influentes
+Antes de removermos os outliers, será verificado se estes influenciam de forma positiva no modelo, que seriam pontos influentes, para identificar estes individuos, será utilizado a métrica **Distância de Cook**.
+
+É considerado um ponto influente, indivíduos com o valor da distância de cook próximo, igual ou maior que 1.
+
+
+```{r}
+dfTreino$DistanciaCook <- cooks.distance(modelo1)
+plot_ly(dfTreino, y=~DistanciaCook, x=~N, type = "scatter", marker=list(color="darkmagenta"))
+```
+
+**OBS:** Apesar de alguns indivíduos conterem o valor da distância de cook maior que o restante, não é o bastante para ser considerado um ponto influente
+
+___
+
+
+# Removendo Outliers do dataset
+será removido todo individuo que contenha residuos padronizados com valores maiores que 2 e menores que -2.
+
+```{r}
+outliers <- filter(dfTreino, residuo_padronizado >= 2 | residuo_padronizado <= -2)$N
+dfSemOutlier <- dfTreino[-outliers,]
+```
+
+# Conferindo alteração {.tabset}
+
+## Resíduos padronizados sem outliers
+
+```{r}
+plot_ly(data = dfSemOutlier, x=~N, y=~residuo_padronizado, marker=list(color="darkgreen"))
+```
+
+
+**OBS:** Agora com todos os resíduos padronizados menores que 2, e maiores que -2
+
+___
+
+## Resíduos padronizados com outliers
+
+```{r}
+plot_ly(data = dfTreino, x=~N, y=~residuo_padronizado, marker=list(color="darkgreen"))
+```
+
+___
+
+
+# Gerando o novo modelo sem os Outliers
+
+```{r}
+modeloFinal <- glm(data = dfSemOutlier, family = binomial(), formula = `clicou no anuncio` ~  `minutos diarios no site` + `renda anual` + idade)
+```
+
+
+# Comparando o novo modelo com o modelo 1
+
+```{r}
+list( AIC(modeloFinal, modelo1), BIC(modeloFinal, modelo1) ) %>% knitr::kable()
+```
+
+**OBS:** Como podemos ver, o modelo final teve um resultado superior
+
+
+# Verificando o quanto as variáveis explicam os dados {.tabset}
+Novamente será utilizada a métrica do pseudo R quadrado, so que comparando o modelo final com o modelo 1
+
+## Modelo final
+
+```{r}
+modeloFinal %>%  PseudoR2(which = "Nagelkerke")
+```
+
+**OBS:** É notavel que agora sem outliers, aproximadamente 90% dos dados são explicados pelas variáveis, invés dos 80% do modelo com outliers
+
+___
+
+
+## Modelo 1
+
+```{r}
+modelo1 %>%  PseudoR2(which = "Nagelkerke")
+```
+
+# Testando o modelo
+Antes do teste, será feito o teste de multicolinearidade.
+
+Multicolinearidade é quando há uma correlação muito forte entre **variáveis preditoras**, o que pode ser prejudicial na eficácia do modelo, é considerado caso de multicolinearidade quando a correlação entre as variáveis preditoras ultrapassam dos 0.8(80%).
+
+
+```{r}
+pairs.panels(dfTreino %>% select(`renda anual`, `minutos diarios no site`, idade))
+```
+
+**OBS:** Como podemos ver, não há multicolinearidade entre as variáveis preditoras
+
+___
+
+# Resultado das predições {.tabset}
+Será aplicado a partição que representa 20% do dataset, para avaliar como que o modelo reage com dados que ele nunca viu.
+
+Será gerado um gráfico de dispersão, que irá comparar os dados **reais** do conjunto de testes, com as predições do modelo, ou seja, irá comparar o que realmente aconteceu, com o que o modelo preveu, colorindo de tom esverdeado os dados **reais** do conjunto teste que são individuos que **CLICARAM** em anúncios, e coloririndo de tom avermelhado os dados **reais** do conjunto de teste que **NÃO CLICARAM**  nos anúncios.
+
+A numeração entre 0 a 100, equivale a porcentagem de chance de um indivíduo clicar nos anúncios, esta numeração nada mais é que o resultado da predição do modelo final.
+
+Então, basicamente, quanto mais dados esverdeados(**clicaram**) no topo da porcentagem, e quanto mais dados avermelhados(**não clicaram**) no fundo, melhor desempenho de acerto o modelo tem na prática.
+
+
+## Gráfico representativo
+
+```{r}
+preds <- predict( modeloFinal, select(dfTeste, -`clicou no anuncio`), type = "response" )
+
+predicoes <- tibble( "Clicou no anuncio"=dfTeste$`clicou no anuncio`, "Predicao"=round(preds*100,2) )
+
+plot_ly(data = predicoes, y=~Predicao, color=~`Clicou no anuncio`, type = "scatter", colors = c("firebrick","olivedrab"))
+```
+
+
+**OBS:** Podemos ver que a grande maioria dos individuos dos dados **reais** que clicaram(**verdes**), o modelo sugeriu uma % alta para chance do clique, e também sugeriu uma % baixa para a grande maioria dos individuos que realmente não clicaram(**vermelhos**) em anúncios.
+
+___
+
+## Dataset da % de predições
+
+```{r}
+predicoes$Predicao <- str_c(predicoes$Predicao,"%")
+predicoes %>% head %>% knitr::kable(align = "ll")
+```
+
+___
+
+___
+
+___
+
+
