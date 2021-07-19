@@ -331,9 +331,9 @@ Então, basicamente, quanto mais dados esverdeados(**clicaram**) no topo da porc
 ```{r}
 preds <- predict( modeloFinal, select(dfTeste, -`clicou no anuncio`), type = "response" )
 
-predicoes <- tibble( "Clicou no anuncio"=dfTeste$`clicou no anuncio`, "Predicao"=round(preds*100,2) )
+predicoes <- tibble(N=1:nrow(dfTeste), "Clicou no anuncio"=dfTeste$`clicou no anuncio`, "Predicao"=round(preds*100,1) )
 
-plot_ly(data = predicoes, y=~Predicao, color=~`Clicou no anuncio`, type = "scatter", colors = c("firebrick","olivedrab"))
+plot_ly(data = predicoes, y=~Predicao, x=~N, color=~`Clicou no anuncio`, type = "scatter", colors = c("firebrick","olivedrab"))
 ```
 
 
@@ -344,8 +344,8 @@ ___
 ## Dataset da % de predições
 
 ```{r}
-predicoes$Predicao <- str_c(predicoes$Predicao,"%")
-predicoes %>% head %>% knitr::kable(align = "ll")
+predicoes$Predicao <- str_c( predicoes$Predicao, "%" )
+predicoes[,-1] %>% head %>% knitr::kable(align = "ll")
 ```
 
 ___
