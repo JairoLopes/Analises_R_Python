@@ -45,7 +45,15 @@ df %>% head(3) %>% knitr::kable(align = "llllllll")
 df %>% str
 ```
 
+# Verificando se há dados faltantes nas variáveis
+
+```{r}
+df %>% is.na %>% colSums %>% knitr::kable(align = "l")
+```
+
+
 ___
+
 
 # Renomeando e alterando os tipos das variáveis
 
